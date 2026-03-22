@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自选股票助手</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <div class="container">
+    <!-- 大盘指数区域 -->
+    <div class="market-indices">
+      <div class="index-item" data-secid="1.000001">
+        <div class="index-name">上证指数</div>
+        <div class="index-value">--</div>
+        <div class="index-change">-- --</div>
+      </div>
+      <div class="index-item" data-secid="1.000300">
+        <div class="index-name">沪深300</div>
+        <div class="index-value">--</div>
+        <div class="index-change">-- --</div>
+      </div>
+      <div class="index-item" data-secid="0.399001">
+        <div class="index-name">深证成指</div>
+        <div class="index-value">--</div>
+        <div class="index-change">-- --</div>
+      </div>
+      <div class="index-item" data-secid="0.399006">
+        <div class="index-name">创业板指</div>
+        <div class="index-value">--</div>
+        <div class="index-change">-- --</div>
+      </div>
+    </div>
+
+    <!-- 添加股票区域 -->
+    <div class="add-stock-section edit-only">
+      <label>添加股票：</label>
+      <input type="text" id="searchInput" placeholder="请输入股票代码或名称">
+      <button id="searchBtn">确定</button>
+      <div id="searchResults" class="search-results hidden"></div>
+    </div>
+
+    <!-- 股票列表区域 -->
+    <div class="stock-list-section">
+      <div class="stock-header">
+        <span class="col-name">股票名称 (<span id="stockCount">0</span>)</span>
+        <span class="col-code">股票代码</span>
+        <span class="col-shares edit-only">持有股数</span>
+        <span class="col-cost edit-only">成本价</span>
+        <span class="col-price">现价</span>
+        <span class="col-change">涨跌幅</span>
+        <span class="col-profit">收益</span>
+        <span class="col-action edit-only">操作</span>
+      </div>
+      <div id="stockList" class="stock-list"></div>
+    </div>
+
+    <!-- 底部工具栏 -->
+    <div class="footer">
+      <div class="theme-toggle">
+        <span>标准模式</span>
+        <label class="switch">
+          <input type="checkbox" id="themeToggle">
+          <span class="slider"></span>
+        </label>
+        <span>暗色模式</span>
+      </div>
+      <div class="actions">
+        <button id="marketBtn">行情中心</button>
+        <span id="marketStatus" class="market-status">休市中</span>
+        <button id="editBtn">编辑</button>
+        <button id="settingsBtn">设置</button>
+        <button id="refreshBtn" class="refresh-btn">🔄</button>
+      </div>
+    </div>
+
+    <!-- 日收益汇总 -->
+    <div class="daily-profit">
+      日收益：<span id="totalProfit">0.00</span> <span id="totalProfitRate">(0.00%)</span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
