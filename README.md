@@ -2,6 +2,10 @@
 
 一个简洁实用的Chrome浏览器扩展，帮助你实时追踪自选股票行情和持仓收益。
 
+## 📸 效果预览
+
+![stock-assistant](screenshots/demo.png)
+
 ## ✨ 功能特性
 
 | 功能 | 说明 |
