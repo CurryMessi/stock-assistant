@@ -27,7 +27,9 @@ let state = {
   stocks: [],
   settings: {
     theme: 'light',
-    refreshInterval: 10000
+    refreshInterval: 10000,
+    sortBy: 'addTime',
+    sortOrder: 'desc'
   },
   isEditMode: false,
   refreshTimer: null
@@ -51,6 +53,7 @@ function initElements() {
   elements.searchResults = document.getElementById('searchResults');
   elements.stockList = document.getElementById('stockList');
   elements.stockCount = document.getElementById('stockCount');
+  elements.sortSelect = document.getElementById('sortSelect');
   elements.themeToggle = document.getElementById('themeToggle');
   elements.editBtn = document.getElementById('editBtn');
   elements.refreshBtn = document.getElementById('refreshBtn');
@@ -74,6 +77,9 @@ function initEventListeners() {
       elements.searchResults.classList.add('hidden');
     }
   });
+
+  // 排序
+  elements.sortSelect.addEventListener('change', handleSortChange);
 
   // 主题切换
   elements.themeToggle.addEventListener('change', handleThemeToggle);
@@ -102,6 +108,7 @@ async function loadData() {
     }
     applyTheme(state.settings.theme);
     elements.themeToggle.checked = state.settings.theme === 'dark';
+    elements.sortSelect.value = `${state.settings.sortBy}-${state.settings.sortOrder}`;
   } catch (error) {
     console.error('加载数据失败:', error);
   }
@@ -280,32 +287,33 @@ function renderStockList() {
     return;
   }
 
-  elements.stockList.innerHTML = state.stocks.map((stock, index) => {
+  const sortedStocks = getSortedStocks();
+
+  elements.stockList.innerHTML = sortedStocks.map(({ stock, originalIndex }) => {
     const profitInfo = getStockProfitDisplay(stock);
     const priceClass = (stock.changePercent || 0) >= 0 ? 'rise' : 'fall';
     const profitClass = profitInfo.profit >= 0 ? 'rise' : 'fall';
 
-    // 如果有成本价，额外显示今日收益
     const hasCost = stock.costPrice && stock.costPrice > 0 && stock.shares;
     const dailyProfit = hasCost ? calculateDailyProfit(stock) : null;
 
     return `
-      <div class="stock-item" data-index="${index}">
+      <div class="stock-item" data-index="${originalIndex}">
         <span class="col-name">${stock.name}</span>
         <span class="col-code">${stock.code}</span>
         <span class="col-shares edit-only">
           ${state.isEditMode
         ? `<div class="shares-control">
-             <button class="shares-btn minus-btn" data-index="${index}">-</button>
-             <input type="text" class="shares-input" value="${stock.shares || 0}" data-index="${index}">
-             <button class="shares-btn plus-btn" data-index="${index}">+</button>
+             <button class="shares-btn minus-btn" data-index="${originalIndex}">-</button>
+             <input type="text" class="shares-input" value="${stock.shares || 0}" data-index="${originalIndex}">
+             <button class="shares-btn plus-btn" data-index="${originalIndex}">+</button>
            </div>`
         : (stock.shares || '-')
       }
         </span>
         <span class="col-cost edit-only">
           ${state.isEditMode
-        ? `<input type="number" step="0.01" class="cost-input" value="${stock.costPrice || ''}" placeholder="选填" data-index="${index}">`
+        ? `<input type="number" step="0.01" class="cost-input" value="${stock.costPrice || ''}" placeholder="选填" data-index="${originalIndex}">`
         : (stock.costPrice ? stock.costPrice.toFixed(2) : '-')
       }
         </span>
@@ -321,7 +329,7 @@ function renderStockList() {
           ` : '-'}
         </span>
         <span class="col-action edit-only">
-          <button class="delete-btn" data-index="${index}">删除</button>
+          <button class="delete-btn" data-index="${originalIndex}">删除</button>
         </span>
       </div>
     `;
@@ -339,6 +347,52 @@ function renderStockList() {
       deleteStock(index);
     });
   });
+}
+
+function getSortedStocks() {
+  const { sortBy, sortOrder } = state.settings;
+  const direction = sortOrder === 'asc' ? 1 : -1;
+
+  return state.stocks
+    .map((stock, originalIndex) => ({ stock, originalIndex }))
+    .sort((left, right) => {
+      const leftValue = getSortValue(left.stock, sortBy);
+      const rightValue = getSortValue(right.stock, sortBy);
+
+      if (sortBy === 'name') {
+        return direction * String(leftValue).localeCompare(String(rightValue), 'zh-CN');
+      }
+
+      if (leftValue === rightValue) {
+        return right.stock.addTime - left.stock.addTime;
+      }
+
+      return direction * (leftValue - rightValue);
+    });
+}
+
+function getSortValue(stock, sortBy) {
+  switch (sortBy) {
+    case 'changePercent':
+      return stock.changePercent || 0;
+    case 'currentPrice':
+      return stock.currentPrice || 0;
+    case 'profit':
+      return getStockProfitDisplay(stock).profit || 0;
+    case 'name':
+      return stock.name || '';
+    case 'addTime':
+    default:
+      return stock.addTime || 0;
+  }
+}
+
+function handleSortChange() {
+  const [sortBy, sortOrder] = elements.sortSelect.value.split('-');
+  state.settings.sortBy = sortBy;
+  state.settings.sortOrder = sortOrder;
+  saveData();
+  renderStockList();
 }
 
 function bindEditEvents() {

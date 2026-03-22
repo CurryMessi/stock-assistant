@@ -44,8 +44,25 @@
 
     <!-- 股票列表区域 -->
     <div class="stock-list-section">
+      <div class="stock-toolbar">
+        <div class="stock-toolbar-title">自选股票 (<span id="stockCount">0</span>)</div>
+        <div class="sort-control">
+          <label for="sortSelect">排序：</label>
+          <select id="sortSelect">
+            <option value="addTime-desc">最新添加</option>
+            <option value="addTime-asc">最早添加</option>
+            <option value="changePercent-desc">涨幅优先</option>
+            <option value="changePercent-asc">跌幅优先</option>
+            <option value="currentPrice-desc">现价从高到低</option>
+            <option value="currentPrice-asc">现价从低到高</option>
+            <option value="profit-desc">收益从高到低</option>
+            <option value="profit-asc">收益从低到高</option>
+            <option value="name-asc">名称 A-Z</option>
+          </select>
+        </div>
+      </div>
       <div class="stock-header">
-        <span class="col-name">股票名称 (<span id="stockCount">0</span>)</span>
+        <span class="col-name">股票名称</span>
         <span class="col-code">股票代码</span>
         <span class="col-shares edit-only">持有股数</span>
         <span class="col-cost edit-only">成本价</span>
