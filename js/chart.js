@@ -54,9 +54,9 @@ export async function createChart(container, theme) {
 
   const colors = getChartColors(theme);
 
-  const LightweightCharts = await import('../libs/lightweight-charts.standalone.production.mjs');
+  const { createChart: lwCreateChart, CrosshairMode } = await import('../libs/lightweight-charts.standalone.production.mjs');
 
-  activeChart = LightweightCharts.createChart(container, {
+  activeChart = lwCreateChart(container, {
     width: container.clientWidth,
     height: 200,
     layout: {
@@ -68,7 +68,7 @@ export async function createChart(container, theme) {
       horzLines: { color: colors.gridColor },
     },
     crosshair: {
-      mode: LightweightCharts.CrosshairMode.Normal,
+      mode: CrosshairMode.Normal,
     },
     timeScale: {
       borderColor: colors.borderColor,
@@ -79,7 +79,7 @@ export async function createChart(container, theme) {
     },
   });
 
-  const series = activeChart.addSeries(LightweightCharts.CandlestickSeries, {
+  const series = activeChart.addCandlestickSeries({
     upColor: colors.upColor,
     downColor: colors.downColor,
     wickUpColor: colors.upColor,

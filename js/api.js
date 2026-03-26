@@ -101,7 +101,12 @@ export async function fetchMarketIndices() {
 export async function fetchKlineData(secid, period = 'daily', limit = 60) {
   try {
     const klt = KLINE_PERIOD_MAP[period] || 101;
-    const url = `${API_CONFIG.KLINE_API}?secid=${secid}&fields1=f1,f2,f3,f4,f5,f6&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61&klt=${klt}&fqt=1&beg=0&end=20500101&lmt=${limit}`;
+    // 计算起始日期：日K取1年前，周K取3年前，月K取10年前
+    const now = new Date();
+    const yearsBack = period === 'monthly' ? 10 : period === 'weekly' ? 3 : 1;
+    now.setFullYear(now.getFullYear() - yearsBack);
+    const beg = now.toISOString().slice(0, 10).replace(/-/g, '');
+    const url = `${API_CONFIG.KLINE_API}?secid=${secid}&fields1=f1,f2,f3,f4,f5,f6&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61&klt=${klt}&fqt=1&beg=${beg}&end=20500101&lmt=${limit}`;
     const response = await fetch(url);
     const data = await response.json();
     if (data.data && data.data.klines) {
