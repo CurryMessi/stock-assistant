@@ -42,11 +42,15 @@
       <div id="searchResults" class="search-results hidden"></div>
     </div>
 
+    <!-- 分组标签栏 -->
+    <div id="groupTabs" class="group-tabs"></div>
+
     <!-- 股票列表区域 -->
     <div class="stock-list-section">
       <div class="stock-header">
         <span class="col-name">股票名称 (<span id="stockCount">0</span>)</span>
         <span class="col-code">股票代码</span>
+        <span class="col-group edit-only">分组</span>
         <span class="col-shares edit-only">持有股数</span>
         <span class="col-cost edit-only">成本价</span>
         <span class="col-price">现价</span>
@@ -71,7 +75,6 @@
         <button id="marketBtn">行情中心</button>
         <span id="marketStatus" class="market-status">休市中</span>
         <button id="editBtn">编辑</button>
-        <button id="settingsBtn">设置</button>
         <button id="refreshBtn" class="refresh-btn">🔄</button>
       </div>
     </div>
@@ -82,7 +85,7 @@
     </div>
   </div>
 
-  <script src="popup.js"></script>
+  <script type="module" src="popup.js"></script>
 </body>
 
 </html>
